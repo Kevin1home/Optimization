@@ -196,10 +196,6 @@ public class Simplex {
 
         }
 
-        if (this.maxPower == -1) {
-            return;
-        }
-
         // Заполняем итоговые значения переменных (значения для всех X)
         for (int i = 0; i < rows; i++) {
             solution[basis[i]] = tmpResources[i];

@@ -19,14 +19,14 @@ public class BranchAndBound {
     }
 
     public double optimize() {
-        System.out.println("\nВыбран вариант решения через метод \"ветвей и границ\"\n");
+        System.out.println("\nВыбран вариант решения через метод \"ветвей и границ\""); // debug
         // Создаём массив условий для дальнейшей проработки
         Condition[] conditions = new Condition[task.costs[0].length];
         calculateMethod(this.task.clone(), conditions);
 
         System.out.println("\nКонец подсчёта метода \"ветвей и границ\""); // debug
-        System.out.println("Количество итераций симплекс-метода: " + calculationsCounter);
-        System.out.println("Количество целочисленных решений: " + integerSolutionsCounter);
+        System.out.println("Количество итераций симплекс-метода: " + calculationsCounter); // debug
+        System.out.println("Количество целочисленных решений: " + integerSolutionsCounter); // debug
         System.out.println("Полученные целочисленные решения: " + Arrays.deepToString(integerSolutions)); // debug
         System.out.println("Лучшее целочисленное решение: " + Arrays.toString(bestIntegerSolution)); // debug
         System.out.println("Максимальная сила с лучшим целочисленным решением: " + bestIntegerMaxPower); // debug
@@ -34,10 +34,9 @@ public class BranchAndBound {
         return bestIntegerMaxPower;
     }
 
-    // TODO: разбить на методы, чтобы не повторялось (с флагом для ветвей)
     private void calculateMethod(Task task, Condition[] conditions) {
         this.calculationsCounter++;
-        System.out.println("Заданные ограничения: " + Arrays.toString(conditions)); // debug
+        System.out.println("\nЗаданные ограничения: " + Arrays.toString(conditions)); // debug
         // Решаем задачу симплекс-методом
         Simplex simplex = new Simplex(task.clone());
         simplex.optimize();
@@ -64,8 +63,7 @@ public class BranchAndBound {
         System.out.println("Решение симплекс-метода НЕ целочисленное, проводим разветвление\n"); // debug
 
         // Находим индекс того X, значение которого самое близкое к следующему выше порядком числу
-        // Учитывая, что на этот Х дополнительного условия ещё не было
-        int indexXHighestFraction = findHighestFraction(task.clone(), conditions);
+        int indexXHighestFraction = findHighestFraction(task.clone());
         System.out.println("indexXHighestFraction: " + indexXHighestFraction); // debug
         // Создаём новые условия
         if (indexXHighestFraction == -1) {
@@ -148,15 +146,13 @@ public class BranchAndBound {
         return new Task(costsModified, resourcesModified, task.unitsPower);
     }
 
-    private int findHighestFraction(Task task, Condition[] conditions) {
+    private int findHighestFraction(Task task) {
         int indexOfHighestFraction = -1;
         double highestFraction = -1;
         for (int i = 0; i < this.task.costs[0].length; i++) { // перебираем только изначальные X
             if (highestFraction < task.solution[i] - (int) task.solution[i]) {
-                if (conditions[i] == null) {
-                    highestFraction = task.solution[i] - (int) task.solution[i];
-                    indexOfHighestFraction = i;
-                }
+                highestFraction = task.solution[i] - (int) task.solution[i];
+                indexOfHighestFraction = i;
             }
         }
         return indexOfHighestFraction;
